@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 add_requires("libsdl")
-target("Software")
+target("Cave-Story")
     set_kind("binary")
     add_files("src/*.cpp")
     add_packages("libsdl")
