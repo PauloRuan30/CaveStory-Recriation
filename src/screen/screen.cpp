@@ -1,56 +1,47 @@
-//Using SDL and standard IO
-#include <SDL2/SDL.h>
-#include <stdio.h>
+#include "screen.h"
+#include <iostream>
 
-//Screen dimension constants
-const int SCREEN_WIDTH;
-const int SCREEN_HEIGHT;
-
-int Init_Screen( int SCREEN_WIDTH, int SCREEN_HEIGHT)
+Screen::Screen()
 {
-    //The window we'll be rendering to
-    SDL_Window* window = NULL;
-    
-    //The surface contained by the window
-    SDL_Surface* screenSurface = NULL;
-
-    //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-    }
-else
-    {
-        //Create window
-        window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-        if( window == NULL )
-        {
-            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-        }
-        else
-        {
-            //Get window surface
-            screenSurface = SDL_GetWindowSurface( window );
-
-            //Fill the surface white
-            SDL_FillRect( screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF ) );
-            
-            //Update the surface
-            SDL_UpdateWindowSurface( window );
-
-            //Hack to get window to stay up
-            SDL_Event e; bool quit = false; while( quit == false ){ while( SDL_PollEvent( &e ) ){ if( e.type == SDL_QUIT ) quit = true; } }
-        }
-    }
-
-void DestroyWindow( )
-{
-     //Destroy window
-    SDL_DestroyWindow( window );
-
-    //Quit SDL subsystems
-    SDL_Quit();
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_CreateWindowAndRenderer(640*1.5, 480*1.5, 0, &window, &renderer);
+    SDL_RenderSetScale(renderer, 2,2);
 }
 
-    return 0;
+void Screen::pixel(float x, float y)
+{
+    points.emplace_back(SDL_FPoint{x, y});
+}
+
+void Screen::show()
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    for(auto& point : points)
+    {
+        SDL_RenderDrawPointF(renderer, point.x, point.y);
+    }
+
+    SDL_RenderPresent(renderer);
+}
+void Screen::clear()
+{
+    points.clear();
+}
+void Screen::input()
+{
+    SDL_Event e;
+    while(SDL_PollEvent(&e))
+    {
+        if(e.type == SDL_QUIT)
+        {
+            SDL_DestroyRenderer(renderer);
+            SDL_DestroyWindow(window);
+            SDL_Quit();
+            exit(0);
+        }
+    }
 }
