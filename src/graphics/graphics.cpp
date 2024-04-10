@@ -2,8 +2,8 @@
 #include <iostream>
 
 // Largura e altura padrão da janela
-int width = 640;
-int height = 420;
+int width = 1280;
+int height = 720;
 
 // Construtor da classe Graphics
 Graphics::Graphics()
@@ -63,55 +63,10 @@ void Graphics::clear()
     points.clear();
 }
 
-// Manipula os eventos de entrada
-void Graphics::input()
-{
-    SDL_Event event;
-
-    // Verifica todos os eventos na fila de eventos
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
-        // Se o evento for o de fechar a janela, define shouldQuit como verdadeiro
-        case SDL_QUIT:
-            shouldQuit = true;
-            break;
-        // Se uma tecla for pressionada
-        case SDL_KEYDOWN:
-            // Se a tecla Esc for pressionada, define shouldQuit como verdadeiro
-            if (event.key.keysym.sym == SDLK_ESCAPE)
-                shouldQuit = true;
-            // Se a tecla F11 for pressionada, alterna entre tela cheia e modo janela
-            else if (event.key.keysym.sym == SDLK_F11)
-                toggleFullscreen();
-            break;
-        }
-    }
-}
-
 // Alterna entre tela cheia e modo janela
 void Graphics::toggleFullscreen()
 {
     Uint32 fullscreenFlag = SDL_WINDOW_FULLSCREEN;
     bool isFullscreen = SDL_GetWindowFlags(window) & fullscreenFlag;
     SDL_SetWindowFullscreen(window, isFullscreen ? 0 : fullscreenFlag);
-}
-
-// Loop principal da aplicação
-void Graphics::run()
-{
-    // Enquanto shouldQuit for falso, continua executando
-    while (!shouldQuit)
-    {
-        input(); // Verifica os eventos de entrada
-        show();  // Renderiza os pontos na tela
-    }
-
-    // Destroi o renderer e a janela
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-
-    // Finaliza o SDL
-    SDL_Quit();
 }

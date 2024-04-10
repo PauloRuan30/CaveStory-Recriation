@@ -12,8 +12,6 @@ public:
     void pixel(float x, float y);
     void show();
     void clear();
-    void input();
-    void run();
 
 private:
     SDL_Window* window = nullptr;
